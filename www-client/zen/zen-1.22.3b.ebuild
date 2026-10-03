@@ -606,10 +606,21 @@ src_configure() {
 		--with-toolchain-prefix="${CHOST}-" \
 		--with-unsigned-addon-scopes=app,system
 
-	# Zen identity (matches upstream surfer.json and configs/common/mozconfig).
+	# Zen identity/branding (as in upstream's surfer.json and
+	# configs/common/mozconfig).  The directory must be selected with
+	# --with-branding: MOZ_BRANDING_DIRECTORY and
+	# MOZ_OFFICIAL_BRANDING_DIRECTORY are confvars (settable only from
+	# confvars.sh, see toolkit/moz.configure), so setting them in the
+	# environment does nothing and the stock browser/confvars.sh values would
+	# leak Firefox branding into the UI (window title, about dialog).
+	# browser/branding/release holds the Zen logo and brand.ftl and is what
+	# the official release binaries are built with.  --enable-official-branding
+	# must stay off: it takes precedence over --with-branding and would force
+	# browser/branding/official.
 	mozconfig_add_options_ac 'Zen upstream' \
 		--with-app-name=zen \
 		--with-app-basename=Zen \
+		--with-branding=browser/branding/release \
 		--with-distribution-id=app.zen-browser \
 		--with-l10n-base="${S}/browser/locales"
 
