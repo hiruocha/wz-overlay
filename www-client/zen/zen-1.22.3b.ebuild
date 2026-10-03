@@ -932,8 +932,13 @@ src_compile() {
 		lang=${lang##*/}
 		[[ ${lang} == en-US ]] && continue
 		einfo "Building language pack: ${lang}"
+		# The manifest's compatibility range is checked against the
+		# *platform* version (156.0.1), so the default maximum derived from
+		# MOZ_APP_VERSION ("1.*") would make every pack incompatible.  A
+		# numeric maximum avoids that ("*" would be shell-globbed in make).
 		emake -C "${BUILD_DIR}/browser/locales" "langpack-${lang}" \
 			MOZ_CHROME_FILE_FORMAT=flat \
+			MOZ_APP_MAXVERSION="9999" \
 			MOZ_LANGPACK_EID="langpack-${lang}@zen-browser.app" \
 			PKG_LANGPACK_BASENAME="langpack-${lang}@zen-browser.app" \
 			PKG_LANGPACK_PATH=xpi/ \
