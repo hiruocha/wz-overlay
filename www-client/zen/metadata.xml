@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<maintainer type="person">
+		<email>hiruocha@outlook.com</email>
+		<name>hiruocha</name>
+	</maintainer>
+	<upstream>
+		<remote-id type="github">zen-browser/desktop</remote-id>
+	</upstream>
+	<longdescription lang="en">
+		Zen Browser is a Firefox-based browser built from upstream release source
+		snapshots, focused on tranquillity, customization and privacy. It offers
+		vertical tabs, workspaces, split views and is Firefox Sync compatible.
+	</longdescription>
+</pkgmetadata>
