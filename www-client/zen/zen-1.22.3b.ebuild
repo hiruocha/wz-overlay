@@ -921,6 +921,24 @@ src_compile() {
 	fi
 
 	${virtx_cmd} ./mach build --verbose || die
+
+	# Build a language pack (XPI) for every shipped locale, as Debian's
+	# firefox-l10n packages do.  The in-build MOZ_CHROME_MULTILOCALE path
+	# cannot be used: it requires legacy chrome dirs that the Fluent-only
+	# locale data no longer ships.
+	local lang
+	for lang in "${S}"/browser/locales/*/ ; do
+		lang=${lang%/}
+		lang=${lang##*/}
+		[[ ${lang} == en-US ]] && continue
+		einfo "Building language pack: ${lang}"
+		emake -C "${BUILD_DIR}/browser/locales" "langpack-${lang}" \
+			MOZ_CHROME_FILE_FORMAT=flat \
+			MOZ_LANGPACK_EID="langpack-${lang}@zen-browser.app" \
+			PKG_LANGPACK_BASENAME="langpack-${lang}@zen-browser.app" \
+			PKG_LANGPACK_PATH=xpi/ \
+			|| die "Building language pack for ${lang} failed"
+	done
 }
 
 src_test() {
@@ -1027,6 +1045,13 @@ src_install() {
 		cat >>"${ZEN_PREFS}" <<-EOF || die "failed to enable jpegxl via pref"
 		pref("image.jxl.enabled", true);
 		EOF
+	fi
+
+	# Install the language packs built in src_compile (the browser's
+	# language picker reads app-scoped XPIs from here).
+	if compgen -G "${BUILD_DIR}/dist/xpi/langpack-*.xpi" > /dev/null ; then
+		insinto "${MOZILLA_FIVE_HOME}/browser/extensions"
+		doins "${BUILD_DIR}"/dist/xpi/langpack-*.xpi || die
 	fi
 
 	# Install icons
