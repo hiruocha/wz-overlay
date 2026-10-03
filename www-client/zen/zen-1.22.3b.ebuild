@@ -562,6 +562,16 @@ src_configure() {
 	mozconfig_add_options_ac '' --enable-application=browser
 	mozconfig_add_options_ac '' --enable-project=browser
 
+	# Shipped build: unlocks the Zen first-run defaults in zen.js (the OOBE,
+	# watermark, marketplace injections, mods auto-update, ...).  Not tied to
+	# USE=telemetry -- -telemetry is handled by MOZ_*REPORTING=0 below and by
+	# zen-telemetry-prefs.js.
+	export MOZILLA_OFFICIAL=1
+	# Written in both forms like upstream's mozconfig: only
+	# `mk_add_options "export ..."` entries are re-exported into the
+	# configure environment by mach (a plain `export` line is not).
+	echo "mk_add_options \"export MOZILLA_OFFICIAL=1\" # Zen official build" >>${MOZCONFIG} || die
+
 	mozconfig_add_options_ac 'Gentoo default' \
 		--allow-addon-sideload \
 		--disable-cargo-incremental \
